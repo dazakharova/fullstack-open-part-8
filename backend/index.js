@@ -162,7 +162,9 @@ const resolvers = {
           bookCount
         }
       })
-    },
+    }
+  },
+  Mutation: {
     addBook: (root, args) => {
       if (!authors.includes(args.author)) {
         authors.push({ name: args.author, id: uuid() })
