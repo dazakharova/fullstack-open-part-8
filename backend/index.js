@@ -159,7 +159,7 @@ const resolvers = {
         return {
           name: author.name,
           born: author.born,
-          bookCount
+          bookCount: bookCount
         }
       })
     }
@@ -180,7 +180,13 @@ const resolvers = {
         return null
       }
       author.born = args.setBornTo
-      return author
+
+      const bookCount = books.filter(book => book.author === author.name).length;
+
+      return {
+        ...author,
+        bookCount
+      }
     }
   }
 }
