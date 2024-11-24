@@ -13,6 +13,11 @@ const Authors = (props) => {
     return <div>loading...</div>
   }
 
+  if (!result.data || !result.data.allAuthors) {
+    return <div>No data available.</div>;
+  }
+
+
   const authors = result.data.allAuthors
 
   return (
