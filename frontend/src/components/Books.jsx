@@ -1,43 +1,39 @@
-import { ALL_BOOKS } from '../queries.js';
+import {ALL_BOOKS, ALL_GENRES} from '../queries.js';
 import { useQuery } from '@apollo/client';
 import {useState} from "react";
 
 const Books = (props) => {
-  const [ genre, setGenre ] = useState('')
+  const bookResult = useQuery(ALL_BOOKS, {
+    variables: { genre: props.selectedGenre || null}
+  })
 
-  const result = useQuery(ALL_BOOKS)
+  const genresResult = useQuery(ALL_GENRES)
 
   if (!props.show) {
     return null
   }
 
-  if (result.loading) {
+  if (bookResult.loading || genresResult.loading) {
     return <div>loading...</div>
   }
 
-  if (!result.data || !result.data.allBooks) {
+  if (!bookResult.data || !bookResult.data.allBooks ) {
     return <div>No data available.</div>;
   }
 
-  let books = result.data.allBooks
-
-  let genres = []
-  books.forEach(b => {
-    b.genres.forEach(g => {
-      if (!genres.includes(g)) {
-        genres.push(g)
-      }
-    })
-  })
-
-  if (genre) {
-    books = books.filter(b => b.genres.includes(genre))
+  let genres;
+  if (!genresResult.data || !genresResult.data.allGenres) {
+    genres = []
+  } else {
+    genres = genresResult.data.allGenres
   }
+
+  let books = bookResult.data.allBooks
 
   return (
     <div>
       <h2>books</h2>
-      { genre ? (<p>in genre <b>{genre}</b></p>) : <></> }
+      { props.selectedGenre ? (<p>in genre <b>{props.selectedGenre}</b></p>) : <></> }
       <table>
         <tbody>
           <tr>
@@ -56,9 +52,9 @@ const Books = (props) => {
       </table>
       <div>
         {genres.map(genre => {
-        return <button key={genre} onClick={() => setGenre(genre)}>{genre}</button>
+        return <button key={genre} onClick={() => props.setSelectedGenre(genre)}>{genre}</button>
       })}
-        <button onClick={() => setGenre("")}>all genres</button>
+        <button onClick={() => props.setSelectedGenre("")}>all genres</button>
       </div>
     </div>
   )

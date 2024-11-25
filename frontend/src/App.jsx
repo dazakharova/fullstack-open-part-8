@@ -9,6 +9,7 @@ import RecommendedBooks from "./components/RecommendedBooks.jsx";
 const App = () => {
   const [page, setPage] = useState("authors");
   const [token, setToken] = useState(() => localStorage.getItem('phonenumbers-user-token'));
+  const [selectedGenre, setSelectedGenre] = useState('')
   const client = useApolloClient();
 
   const logout = () => {
@@ -38,11 +39,11 @@ const App = () => {
 
       <Authors show={page === "authors"} />
 
-      <Books show={page === "books"} />
+      <Books selectedGenre={selectedGenre} setSelectedGenre={setSelectedGenre} show={page === "books"} />
 
       <RecommendedBooks show={page === "recommend"} />
 
-      <NewBook show={page === "add"} />
+      <NewBook selectedGenre={selectedGenre} show={page === "add"} />
 
       <LoginForm show={page === "login"} setPage={setPage} setToken={setToken} />
     </div>

@@ -151,6 +151,7 @@ const typeDefs = `
     allBooks (author: String, genre: String): [Book!]!
     recommendedBooks: RecommendedBooksResult!
     allAuthors: [Author!]!
+    allGenres: [String!]!
     me: User
   }
   
@@ -222,6 +223,20 @@ const resolvers = {
         name: author.name,
         born: author.born
       }))
+    },
+    allGenres: async () => {
+      const books = await Book.find({});
+      const genres = [];
+
+      books.forEach((book) => {
+        book.genres.forEach((genre) => {
+          if (!genres.includes(genre)) {
+            genres.push(genre)
+          }
+        })
+      })
+
+      return genres
     },
     me: (root, args, context) => {
       return context.currentUser
