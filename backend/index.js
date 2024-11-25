@@ -118,7 +118,7 @@ let books = [
 const typeDefs = `
   type User {
     username: String!
-    favoriteGenre: String!
+    favouriteGenre: String!
     id: ID!
   }
   
@@ -140,10 +140,16 @@ const typeDefs = `
     bookCount: Int!
   }
   
+  type RecommendedBooksResult {
+  books: [Book!]!
+  favouriteGenre: String!
+}
+  
   type Query {
     bookCount: Int!
     authorCount: Int!
     allBooks (author: String, genre: String): [Book!]!
+    recommendedBooks: RecommendedBooksResult!
     allAuthors: [Author!]!
     me: User
   }
@@ -161,7 +167,7 @@ const typeDefs = `
     ): Author
     createUser(
     username: String!
-    favoriteGenre: String!
+    favouriteGenre: String!
     ): User
     login(
       username: String!
@@ -190,6 +196,25 @@ const resolvers = {
 
       const books = await Book.find(query).populate('author')
       return books
+    },
+    recommendedBooks: async (root, args, context) => {
+      const currentUser = context.currentUser;
+
+      if (!currentUser) {
+        throw new GraphQLError('not authenticated', {
+          extensions: {
+            code: 'BAD_USER_INPUT',
+          }
+        });
+      }
+
+      const favouriteGenre = currentUser.favouriteGenre;
+
+      const books = await Book.find({ genres: { $in: [favouriteGenre] } }).populate('author');
+      return {
+        books,
+        favouriteGenre
+      };
     },
     allAuthors: async () => {
       const authors = await Author.find({})
@@ -283,7 +308,7 @@ const resolvers = {
       return author
     },
     createUser: async (root, args) => {
-      const user = new User({ username: args.username, favoriteGenre: args.favoriteGenre })
+      const user = new User({ username: args.username, favouriteGenre: args.favouriteGenre })
 
       try {
         await user.save()

@@ -10,9 +10,7 @@ const LoginForm = ({ show, setPage, setToken }) => {
   const [username, setUsername] = useState('')
   const [password, setPassword] = useState('')
 
-
   const [ login, result ] = useMutation(LOGIN)
-
 
   useEffect(() => {
     if ( result.data ) {

@@ -61,3 +61,22 @@ export const LOGIN = gql`
     }
   }
 `
+
+export const RECOMMENDED_BOOKS = gql`
+  query {
+    recommendedBooks {
+      books {
+        title
+        published
+        author {
+          name
+          born
+        }
+        genres
+      }
+      favouriteGenre
+    }
+  }
+`;
+
+

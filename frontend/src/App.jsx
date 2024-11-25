@@ -4,6 +4,7 @@ import Books from "./components/Books";
 import NewBook from "./components/NewBook";
 import {useApolloClient} from "@apollo/client";
 import LoginForm from "./components/LoginForm.jsx";
+import RecommendedBooks from "./components/RecommendedBooks.jsx";
 
 const App = () => {
   const [page, setPage] = useState("authors");
@@ -17,17 +18,29 @@ const App = () => {
     setPage('authors')
   }
 
+  const LoggedInOptions = () => {
+    return (
+        <>
+          <button onClick={() => setPage("add")}>add book</button>
+          <button onClick={() => setPage("recommend")}>recommend</button>
+          <button onClick={logout}>logout</button>
+        </>
+    )
+  }
+
   return (
     <div>
       <div>
         <button onClick={() => setPage("authors")}>authors</button>
         <button onClick={() => setPage("books")}>books</button>
-        {!token ? <button onClick={() => setPage("login")}>login</button> : <><button onClick={() => setPage("add")}>add book</button><button onClick={logout}>logout</button></>}
+        {!token ? <button onClick={() => setPage("login")}>login</button> : <LoggedInOptions />}
       </div>
 
       <Authors show={page === "authors"} />
 
       <Books show={page === "books"} />
+
+      <RecommendedBooks show={page === "recommend"} />
 
       <NewBook show={page === "add"} />
 
