@@ -47,10 +47,11 @@ const resolvers = {
       };
     },
     allAuthors: async () => {
-      const authors = await Author.find({})
+      const authors = await Author.find({}).populate('bookCount')
       return authors.map(author => ({
         name: author.name,
-        born: author.born
+        born: author.born,
+        id: author.id
       }))
     },
     allGenres: async () => {
@@ -69,6 +70,12 @@ const resolvers = {
     },
     me: (root, args, context) => {
       return context.currentUser
+    }
+  },
+  Author: {
+    bookCount: async (root) => {
+      const count = await Book.countDocuments({ author: root.id });
+      return count;
     }
   },
   Mutation: {
